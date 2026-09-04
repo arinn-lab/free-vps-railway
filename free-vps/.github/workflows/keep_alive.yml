@@ -1,0 +1,21 @@
+name: 24/7 VPS Keep-Alive Ping
+
+on:
+  schedule:
+    # Runs every 5 minutes (standard cron syntax)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping VPS Endpoint
+        run: |
+          TARGET_URL="${{ secrets.VPS_URL }}"
+          if [ -z "$TARGET_URL" ]; then
+            echo "Secret VPS_URL belum diatur. Melewati ping."
+          else
+            echo "Pinging $TARGET_URL ..."
+            curl -I -s --max-time 15 "$TARGET_URL" || true
+          fi
